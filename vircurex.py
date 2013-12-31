@@ -117,7 +117,7 @@ def PlaceOrders(exchange, type, currency, segments, price, santoshis):
 			else:
 				print "Order failed to release: %s" % response['statustxt']
 		else:
-			print "Order failed to release: %s" % response['statustxt']
+			print "Order failed to open: %s" % response['statustxt']
 		if type == "buy":
 			price += 0.00000001
 		else:
