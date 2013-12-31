@@ -73,6 +73,7 @@ def ShotgunBot():
 		currency_at_risk = 0.0
 		btc_balance = 0.0
 		currency_balance = 0.0
+		avg_market_price = 0
 		
 		# access and verify username/password
 		exchange, btc_balance = Verification()
@@ -94,7 +95,18 @@ def ShotgunBot():
 		
 		# Get minimum and maximum prices
 		while (1):
-			print "\n0.00000001 btc = 1 Satoshi"
+			try:
+				market_bid = exchange.get_highest_bid(currency, "btc")
+				market_ask = exchange.get_lowest_ask(currency, "btc")
+				if market_bid['value'] != None and market_ask['value'] != None:
+					avg_market_price = (int(float(market_bid['value'])*100000000) + int(float(market_ask['value'])*100000000)) / 2
+					print "\nAverage market price: %d satoshis" % avg_market_price
+				else:
+					print "\nCould not get market prices. Connection or Vircurex may be down."
+					raise Exception
+			except:
+				raise
+			print "0.00000001 btc = 1 Satoshi"
 			try:
 				min_price = int(raw_input("Enter Minimum price in Satoshis: "))
 				max_price = int(raw_input("Enter Maximum price in Satoshis: "))
@@ -138,14 +150,7 @@ def ShotgunBot():
 				print "\nThe amounts must be floating point numbers (or whole numbers), and equal to or below the amount available."
 		
 		# Get current marking bid and ask
-		try:
-			market_bid = exchange.get_highest_bid(currency, "btc")
-			market_ask = exchange.get_lowest_ask(currency, "btc")
-			if market_bid['value'] != None and market_ask['value'] != None:
-				avg_market_price = (int(float(market_bid['value'])*100000000) + int(float(market_ask['value'])*100000000)) / 2
-			else:
-				print "\nCould not get market prices. Connection or Vircurex may be down."
-				raise Exception
+		try:			
 			# find upper and lower range
 			if avg_market_price > min_price:
 				if max_price < avg_market_price: # all of our orders are going to be bids
@@ -167,8 +172,8 @@ def ShotgunBot():
 				currency_segments = 0
 			
 			print "\nReport:\nThe average market price is: %d satoshis(btc) per 1 %s" % (avg_market_price, currency)
-			print "There will be %.0f buy orders worth %.8f btc each - MUST be above 0.0001 btc for vircurex to accept orders" % (lower_range, btc_segments)
-			print "There will be %.0f sell orders worth %.8f %s each" % (upper_range, currency_segments, currency)
+			print "There will be %.0f buy orders worth %.8f btc each - MUST be above 0.0001 btc to be accepted by vircurex" % (lower_range, btc_segments)
+			print "There will be %.0f sell orders worth %.8f %s each - MUST be above %.4f %s to be accepted by vircurex" % (upper_range, currency_segments, currency, 10000.0/avg_market_price, currency)
 			answer = raw_input("\nProceed? Y/N: ")
 			if answer == "Y" or answer == "y":
 				PlaceOrders(exchange, "buy", currency, btc_segments, min_price/100000000.0, int(lower_range))
