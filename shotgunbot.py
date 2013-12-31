@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Vircurex Shotgun Bot
 # User inputs the currency to buy/sell against btc, the range of prices they wish to aim at, and how much of each currency to spend. 
-# The bot then creates an order for every santoshi in the range, creating buys below market price, and asks above. 
+# The bot then creates an order for every satoshi in the range, creating buys below market price, and asks above. 
 # The API password in Vircurex settings must be the same for get_balance, create_order and release_order for this to work properly.
 # If TheCleaner option eventually gets added, the API password for read_orders and delete_order must also be the same as those prior.
 #
@@ -94,10 +94,10 @@ def ShotgunBot():
 		
 		# Get minimum and maximum prices
 		while (1):
-			print "\n0.00000001 btc = 1 Santoshi"
+			print "\n0.00000001 btc = 1 Satoshi"
 			try:
-				min_price = int(raw_input("Enter Minimum price in Santoshis: "))
-				max_price = int(raw_input("Enter Maximum price in Santoshis: "))
+				min_price = int(raw_input("Enter Minimum price in Satoshis: "))
+				max_price = int(raw_input("Enter Maximum price in Satoshis: "))
 				if max_price > min_price:
 					segments = max_price - min_price + 1
 					if segments > 1000:
@@ -151,18 +151,18 @@ def ShotgunBot():
 			# find upper and lower range
 			if avg_market_price > min_price:
 				if max_price < avg_market_price: # all of our orders are going to be bids
-					lower_range = (max_price - min_price)*100000001 + 1 # 1000000001 because of rounding error going into int later
+					lower_range = 100000000*max_price - 100000000*min_price + 1 
 				else:
-					lower_range = (avg_market_price - min_price)*100000001 	# how many santoshis are going to be buy orders (not all of them)
+					lower_range = 100000000*avg_market_price - 100000000*min_price 	# how many satoshis are going to be buy orders (not all of them)
 				btc_segments = btc_at_risk / lower_range	# the btc value of each segment
 			else:
 				lower_range = 0
 				btc_segments = 0
 			if avg_market_price < max_price:
 				if min_price > avg_market_price:
-					upper_range = (max_price - min_price)*100000001 + 1
+					upper_range = 100000000*max_price - 100000000*min_price + 1
 				else:
-					upper_range = (max_price - avg_market_price)*100000001				# how many santoshis are going to be sell orders
+					upper_range = 100000000*max_price - 100000000*avg_market_price				# how many santoshis are going to be sell orders
 				currency_segments = currency_at_risk / upper_range	# the currency value of each segment
 			else:
 				upper_range = 0
