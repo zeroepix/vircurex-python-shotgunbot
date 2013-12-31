@@ -112,8 +112,6 @@ def ShotgunBot():
 				print "\nPrices must be whole integers. If you want 0.00010000 as the price, you need to enter 10000."
 			except:
 				raise
-		min_price = min_price / 100000000.0
-		max_price = max_price / 100000000.0
 		# Get BTC and DVC to put up for buy and sell orders
 		while (1):
 			try:
@@ -144,37 +142,37 @@ def ShotgunBot():
 			market_bid = exchange.get_highest_bid(currency, "btc")
 			market_ask = exchange.get_lowest_ask(currency, "btc")
 			if market_bid['value'] != None and market_ask['value'] != None:
-				avg_market_price = (float(market_bid['value']) + float(market_ask['value'])) / 2
+				avg_market_price = (int(float(market_bid['value'])*100000000) + int(float(market_ask['value'])*100000000)) / 2
 			else:
 				print "\nCould not get market prices. Connection or Vircurex may be down."
 				raise Exception
 			# find upper and lower range
 			if avg_market_price > min_price:
 				if max_price < avg_market_price: # all of our orders are going to be bids
-					lower_range = 100000000*max_price - 100000000*min_price + 1 
+					lower_range = max_price - min_price + 1 
 				else:
-					lower_range = 100000000*avg_market_price - 100000000*min_price 	# how many satoshis are going to be buy orders (not all of them)
+					lower_range = avg_market_price - min_price 	# how many satoshis are going to be buy orders (not all of them)
 				btc_segments = btc_at_risk / lower_range	# the btc value of each segment
 			else:
 				lower_range = 0
 				btc_segments = 0
 			if avg_market_price < max_price:
 				if min_price > avg_market_price:
-					upper_range = 100000000*max_price - 100000000*min_price + 1
+					upper_range = max_price - min_price + 1
 				else:
-					upper_range = 100000000*max_price - 100000000*avg_market_price				# how many santoshis are going to be sell orders
+					upper_range = max_price - avg_market_price				# how many santoshis are going to be sell orders
 				currency_segments = currency_at_risk / upper_range	# the currency value of each segment
 			else:
 				upper_range = 0
 				currency_segments = 0
 			
-			print "\nReport:\nThe average market price is: %.8f btc per 1 %s" % (avg_market_price, currency)
+			print "\nReport:\nThe average market price is: %d satoshis(btc) per 1 %s" % (avg_market_price, currency)
 			print "There will be %.0f buy orders worth %.8f btc each - MUST be above 0.0001 btc for vircurex to accept orders" % (lower_range, btc_segments)
 			print "There will be %.0f sell orders worth %.8f %s each" % (upper_range, currency_segments, currency)
 			answer = raw_input("\nProceed? Y/N: ")
 			if answer == "Y" or answer == "y":
-				PlaceOrders(exchange, "buy", currency, btc_segments, min_price, int(lower_range))
-				PlaceOrders(exchange, "sell", currency, currency_segments, max_price, int(upper_range))
+				PlaceOrders(exchange, "buy", currency, btc_segments, min_price/100000000.0, int(lower_range))
+				PlaceOrders(exchange, "sell", currency, currency_segments, max_price/100000000.0, int(upper_range))
 			
 		except:
 			raise
