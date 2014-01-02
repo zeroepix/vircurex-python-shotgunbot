@@ -95,13 +95,13 @@ def ShotgunSecrets(secret):
 	secrets['redeem_coupon'] = secret
 	return secrets
 
-def PlaceOrders(exchange, type, currency, segments, price, santoshis):
+def PlaceOrders(exchange, type, currency, segments, price, satoshis, increments):
 	if type == "buy":
-		print("\nPlacing %d Buy Orders:" % santoshis)
+		print("\nPlacing %d Buy Orders:" % satoshis)
 	else:
-		print("\nPlacing %d Sell Orders:" % santoshis)
+		print("\nPlacing %d Sell Orders:" % satoshis)
 	count = 0
-	for i in range(santoshis):
+	for i in range(satoshis):
 		if type == "buy":
 			qty = segments / price				
 		else:
@@ -119,7 +119,7 @@ def PlaceOrders(exchange, type, currency, segments, price, santoshis):
 		else:
 			print "Order failed to open: %s" % response['statustxt']
 		if type == "buy":
-			price += 0.00000001
+			price += float(increments/100000000.0)
 		else:
-			price -= 0.00000001
+			price -= float(increments/100000000.0)
 	print("\n%s Orders Complete: %d orders placed." % (type.capitalize(), count))

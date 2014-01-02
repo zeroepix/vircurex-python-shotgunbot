@@ -111,13 +111,12 @@ def ShotgunBot():
 				min_price = int(raw_input("Enter Minimum price in Satoshis: "))
 				max_price = int(raw_input("Enter Maximum price in Satoshis: "))
 				if max_price > min_price:
-					segments = max_price - min_price + 1
-					if segments > 1000:
-						answer = raw_input("\nYour range in prices is very large (%d). Are you sure you want to create this many orders? Y/N: " % segments)
-						if answer == "y" or answer == "Y":							
-							break
+					answer = int(raw_input("\nEnter increment between orders in Satoshis (blank for 1): "))
+					if answer == "":
+						increments = 1
 					else:
-						break
+						increments = answer
+					break
 				else:
 					print "\nThe maximum price must be greater than the minimum price."
 			except ValueError:
@@ -154,18 +153,18 @@ def ShotgunBot():
 			# find upper and lower range
 			if avg_market_price > min_price:
 				if max_price < avg_market_price: # all of our orders are going to be bids
-					lower_range = max_price - min_price + 1 
+					lower_range = int((max_price - min_price + 1)/increments)					
 				else:
-					lower_range = avg_market_price - min_price 	# how many satoshis are going to be buy orders (not all of them)
+					lower_range = int((avg_market_price - min_price)/increments) 	# how many satoshis are going to be buy orders (not all of them)
 				btc_segments = btc_at_risk / lower_range	# the btc value of each segment
 			else:
 				lower_range = 0
 				btc_segments = 0
 			if avg_market_price < max_price:
 				if min_price > avg_market_price:
-					upper_range = max_price - min_price + 1
+					upper_range = int((max_price - min_price + 1)/increments)					
 				else:
-					upper_range = max_price - avg_market_price				# how many santoshis are going to be sell orders
+					upper_range = int((max_price - avg_market_price)/increments)				# how many santoshis are going to be sell orders
 				currency_segments = currency_at_risk / upper_range	# the currency value of each segment
 			else:
 				upper_range = 0
@@ -176,8 +175,8 @@ def ShotgunBot():
 			print "There will be %.0f sell orders worth %.8f %s each - MUST be above %.4f %s to be accepted by vircurex" % (upper_range, currency_segments, currency, 10000.0/avg_market_price, currency)
 			answer = raw_input("\nProceed? Y/N: ")
 			if answer == "Y" or answer == "y":
-				PlaceOrders(exchange, "buy", currency, btc_segments, min_price/100000000.0, int(lower_range))
-				PlaceOrders(exchange, "sell", currency, currency_segments, max_price/100000000.0, int(upper_range))
+				PlaceOrders(exchange, "buy", currency, btc_segments, min_price/100000000.0, int(lower_range), increments)
+				PlaceOrders(exchange, "sell", currency, currency_segments, max_price/100000000.0, int(upper_range), increments)
 			
 		except:
 			raise
