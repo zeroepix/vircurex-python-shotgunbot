@@ -12,7 +12,7 @@ from vircurex import Vircurex
 from vircurex import ShotgunSecrets
 from vircurex import PlaceOrders
 
-import sys, os
+import sys, os, re
 
 def Verification():
 	"""Get username and password from either user or user.ini"""
@@ -111,11 +111,14 @@ def ShotgunBot():
 				min_price = int(raw_input("Enter Minimum price in Satoshis: "))
 				max_price = int(raw_input("Enter Maximum price in Satoshis: "))
 				if max_price > min_price:
-					answer = int(raw_input("\nEnter increment between orders in Satoshis (blank for 1): "))
-					if answer == "":
-						increments = 1
+					answer = raw_input("\nEnter increment between orders in Satoshis (eg 1, 10, 100 etc),\nor 'o' then the max number of orders you wish to place (eg o20 = 20 orders)\nInput: ")
+					if "o" in answer:
+						answer = int(re.sub(r'o', "", answer))
+						increments = (max_price - min_price) / (answer)
+						if increments == 0:
+							increments = 1
 					else:
-						increments = answer
+						increments = int(answer)						
 					break
 				else:
 					print "\nThe maximum price must be greater than the minimum price."
