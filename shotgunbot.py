@@ -180,6 +180,8 @@ def ShotgunBot():
 			if answer == "Y" or answer == "y":
 				PlaceOrders(exchange, "buy", currency, btc_segments, min_price/100000000.0, int(lower_range), increments)
 				PlaceOrders(exchange, "sell", currency, currency_segments, max_price/100000000.0, int(upper_range), increments)
+				
+			raw_input("Press any key to exit.")
 			
 		except:
 			raise
