@@ -34,7 +34,7 @@ def Verification():
 				exchange = Vircurex(username, secrets)	# create exchange object
 				response = exchange.get_balance("btc")	# get btc balance to verify username/password
 				if response['status'] != 0:				# if it fails, tell the user why
-					print "\n"+response['statustxt']
+					print "\n"+response['statustext']
 					if response['status'] == 8003 and os.path.exists("user.ini"): # and if it fails because of incorrect username/password, delete the user.ini file if it exists and go back to start
 						 os.remove("user.ini")
 				else:
@@ -85,7 +85,7 @@ def ShotgunBot():
 			try:
 				response = exchange.get_balance(currency)	# verify currency code by getting available balance of it
 				if response['status'] != 0:
-					print "\n"+response['statustxt']
+					print "\n"+response['statustext']
 				else:
 					currency_balance = float(response['availablebalance'])
 					print "\nAvailable %s balance: %.8f %s" % (currency.upper(), currency_balance, currency.lower())

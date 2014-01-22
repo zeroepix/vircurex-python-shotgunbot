@@ -115,9 +115,9 @@ def PlaceOrders(exchange, type, currency, segments, price, satoshis, increments)
 				sys.stdout.write("Order Released")
 				count += 1
 			else:
-				print "Order failed to release: %s" % response['statustxt']
+				print "Order failed to release: %s" % response['statustext']
 		else:
-			print "Order failed to open: %s" % response['statustxt']
+			print "Order failed to open: %s" % response['statustext']
 		if type == "buy":
 			price += float(increments/100000000.0)
 		else:
