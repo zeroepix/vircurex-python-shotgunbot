@@ -101,12 +101,16 @@ def PlaceOrders(exchange, type, currency, segments, price, satoshis, increments)
 	else:
 		print("\nPlacing %d Sell Orders:" % satoshis)
 	count = 0
+	total_qty = 0.00
+	average_price = 0.00
 	for i in range(satoshis):
 		if type == "buy":
 			qty = segments / price				
 		else:
 			qty = segments
 		str = "\nOrder: %s %.8f %s @ %.8f btc..." % (type.capitalize(), qty, currency, price)
+		total_qty += qty
+		average_price += price
 		sys.stdout.write(str)
 		response = exchange.create_order(type, qty, currency, price, "btc")
 		if response['status'] == 0:
@@ -123,3 +127,9 @@ def PlaceOrders(exchange, type, currency, segments, price, satoshis, increments)
 		else:
 			price -= float(increments/100000000.0)
 	print("\n%s Orders Complete: %d orders placed." % (type.capitalize(), count))
+	if count != 0:
+		if type == "buy":
+			print("%.8f %s requested @ %.8f average btc" % (total_qty, currency, average_price/count))
+		else:
+			print("%.8f %s submitted @ %.8f average btc (%.8f btc total)" % (total_qty, currency, average_price/count, total_qty*average_price/count))
+			

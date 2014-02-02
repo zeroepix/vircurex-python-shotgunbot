@@ -176,12 +176,12 @@ def ShotgunBot():
 			print "\nReport:\nThe average market price is: %d satoshis(btc) per 1 %s" % (avg_market_price, currency)
 			print "There will be %.0f buy orders worth %.8f btc each - MUST be above 0.0001 btc to be accepted by vircurex" % (lower_range, btc_segments)
 			print "There will be %.0f sell orders worth %.8f %s each - MUST be above %.4f %s to be accepted by vircurex" % (upper_range, currency_segments, currency, 10000.0/avg_market_price, currency)
-			answer = raw_input("\nProceed? Y/N: ")
-			if answer == "Y" or answer == "y":
+			answer = raw_input("\nProceed? Y/n: ")
+			if answer == "Y" or answer == "y" or answer == "":
 				PlaceOrders(exchange, "buy", currency, btc_segments, min_price/100000000.0, int(lower_range), increments)
 				PlaceOrders(exchange, "sell", currency, currency_segments, max_price/100000000.0, int(upper_range), increments)
 				
-			raw_input("Press any key to exit.")
+			raw_input("Press enter to exit.")
 			
 		except:
 			raise
