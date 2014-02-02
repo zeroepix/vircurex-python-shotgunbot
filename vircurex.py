@@ -12,7 +12,7 @@ import random
 import sys
 
 class Vircurex:
-		domain="https://vircurex.com"#domain
+		domain="https://api.vircurex.com"#domain
 		@staticmethod
 		def simpleRequest(command,**params):
 				global domain
