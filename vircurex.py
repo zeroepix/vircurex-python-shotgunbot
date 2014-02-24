@@ -129,7 +129,7 @@ def PlaceOrders(exchange, type, currency, segments, price, satoshis, increments)
 	print("\n%s Orders Complete: %d orders placed." % (type.capitalize(), count))
 	if count != 0:
 		if type == "buy":
-			print("%.8f %s requested @ %.8f average btc" % (total_qty, currency, average_price/count))
+			print("\n%.8f %s requested @ %.8f average btc" % (total_qty, currency, average_price/count))
 		else:
-			print("%.8f %s submitted @ %.8f average btc (%.8f btc total)" % (total_qty, currency, average_price/count, total_qty*average_price/count))
+			print("\n%.8f %s submitted @ %.8f average btc (%.8f btc total)" % (total_qty, currency, average_price/count, total_qty*average_price/count))
 			
