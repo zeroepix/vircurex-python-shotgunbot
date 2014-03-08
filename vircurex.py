@@ -120,8 +120,28 @@ def PlaceOrders(exchange, type, currency, segments, price, satoshis, increments)
 				count += 1
 			else:
 				print "Order failed to release: %s" % response['statustext']
+				
+		elif response['status'] == 10:
+			print "Insufficient Funds (rounding complication), Attempting smaller order"
+			response = exchange.get_balance(currency)	
+			balance = float(response['availablebalance'])
+			str = "\nOrder: %s %.8f %s @ %.8f btc..." % (type.capitalize(), qty, currency, price)
+			sys.stdout.write(str)
+			if balance < qty:
+				response = exchange.create_order(type, balance, currency, price, "btc")
+				if response['status'] == 0:
+					response = exchange.release_order(response['orderid'])
+					if response['status'] == 0:
+						sys.stdout.write("Order Released")
+						count += 1
+					else:
+						print "Order failed to release: %s" % response['statustext']
+				else:
+					print "Order failed to open: %s" % response['statustext']
+			else: print "Error: Insufficient funds are claimed but account balance (%.8f %s) is apparently too much. Check Exchange." % (balance, currency)
 		else:
 			print "Order failed to open: %s" % response['statustext']
+				
 		if type == "buy":
 			price += float(increments/100000000.0)
 		else:
