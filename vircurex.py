@@ -123,9 +123,13 @@ def PlaceOrders(exchange, type, currency, segments, price, satoshis, increments)
 				
 		elif response['status'] == 10:
 			print "Insufficient Funds (rounding complication), Attempting smaller order"
-			response = exchange.get_balance(currency)	
-			balance = float(response['availablebalance'])
-			str = "\nOrder: %s %.8f %s @ %.8f btc..." % (type.capitalize(), qty, currency, price)
+			if type == "buy":
+				response = exchange.get_balance("btc")
+				balance = 0.99*float(response['availablebalance'])/price
+			else:
+				response = exchange.get_balance(currency)	
+				balance = 0.99*float(response['availablebalance'])
+			str = "\nOrder: %s %.8f %s @ %.8f btc..." % (type.capitalize(), balance, currency, price)
 			sys.stdout.write(str)
 			if balance < qty:
 				response = exchange.create_order(type, balance, currency, price, "btc")
