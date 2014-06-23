@@ -1,5 +1,5 @@
 # Vircurex.py
-# This is a modified class based on https://github.com/alexroat/python-vircurex/blob/master/vircurex.py to support the shotgun bot.
+# This is a modified class based on https://github.com/alexroat/python-vircurex/blob/master/vircurex.py to support the BotMaster.
 #
 # Hunterbunter
 # Dec 2013
